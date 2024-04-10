@@ -44,7 +44,7 @@ app.get('/stock/search', async (req, res) => {
         description: item.description,
         symbol: item.symbol
       })).sort((a, b) => a.symbol.localeCompare(b.symbol));
-      res.json(requiredData);
+      res.json({ "stocks": requiredData});
     }
   } catch (error) {
     console.error('Error:', error);

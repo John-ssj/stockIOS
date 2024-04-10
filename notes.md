@@ -79,7 +79,13 @@ curl -X POST http://127.0.0.1:8080/financial/sortPortfolio \
 
 curl http://127.0.0.1:8080/financial/getPortfolio
 
-
 curl http://127.0.0.1:8080/financial/getAll
+```
+
+
+
+```shell
+curl http://127.0.0.1:8080/financial/addWatchList\?\symbol\=AAPL
+curl http://127.0.0.1:8080/financial/removeWatchList\?\symbol\=AAPL
 ```
 
