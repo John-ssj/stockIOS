@@ -52,8 +52,8 @@ app.get('/stock/search', async (req, res) => {
   }
 });
 
-async function getStockSummaryCharts(stock, date) {
-  let t = new Date(Number(date));
+async function getStockSummaryCharts(stock) {
+  let t = new Date();
   let data = {};
   try {
     for (let i = 0; i < 4; i++) {
@@ -74,7 +74,10 @@ async function getStockSummaryCharts(stock, date) {
       return [item.t, Number(item.vw.toFixed(2))]
     });
     const selected_data = extracted_data.length <= 24 ? extracted_data : extracted_data.slice(-24);
-    return selected_data;
+    return {
+      "stock": stock,
+      "charts": selected_data
+    };
   } catch (error) {
     console.error('Error:', error);
     console.log(data);
@@ -101,31 +104,22 @@ async function getStockDetailAndSummary(stock) {
     if (Object.keys(data_1).length === 0 || Object.keys(data_2).length === 0 || Object.keys(data_3).length === 0) {
       return {};
     } else {
-      const date = new Date(data_2["t"] * 1000);
-      const now = new Date();
-      const diff = now.getTime() - date.getTime();
-      const diffMinutes = Math.abs(diff) / (1000 * 60);
-      const marketStatus = diffMinutes <= 5;
-
       const output_data_3 = data_3.filter(str => /^[A-Za-z]+$/.test(str));
 
       const outputData = {
-        "detail": {
-          "logo": data_1["logo"],
-          "symbol": data_1["ticker"],
+        "price": {
           "name": data_1["name"],
-          "code": data_1["exchange"],
-          "lastPrice": data_2["c"].toFixed(2),
-          "change": data_2["d"] ? data_2["d"].toFixed(2) : "0.00",
-          "changePercent": data_2["dp"] ? data_2["dp"].toFixed(2) : "0.00",
-          "timestamp": data_2["t"] + '000',
-          "status": marketStatus
+          "lastPrice": data_2["c"],
+          "change": data_2["d"],
+          "changePercent": data_2["dp"]
         },
-        "summary": {
-          "highPrice": data_2["h"].toFixed(2),
-          "lowPrice": data_2["l"].toFixed(2),
-          "openPrice": data_2["o"].toFixed(2),
-          "prevClose": data_2["pc"].toFixed(2),
+        "stats": {
+          "highPrice": data_2["h"],
+          "lowPrice": data_2["l"],
+          "openPrice": data_2["o"],
+          "prevClose": data_2["pc"]
+        },
+        "about": {
           "ipo": data_1["ipo"],
           "industry": data_1["finnhubIndustry"],
           "webpage": data_1["weburl"],
@@ -161,7 +155,7 @@ async function getStockNews(stock) {
         const formattedDate = formatDate(new Date(item.datetime * 1000));
         return {
           "headline": item.headline,
-          "image": item.image,
+          "imgUrl": item.image,
           "source": item.source,
           "datetime": formattedDate,
           "summary": item.summary,
@@ -197,6 +191,7 @@ async function getStockCharts(stock) {
         return [item.t, Number(item.v.toFixed(2))]
       });
       return {
+        "stock": stock,
         "ohlc": ohlc,
         "volume": volume
       };
@@ -235,12 +230,12 @@ async function getStockInsights(stock) {
       });
 
       const extracted_data = {
-        "totalMspr": totalMspr.toFixed(2),
-        "positiveMspr": positiveMspr.toFixed(2),
-        "negativeMspr": negativeMspr.toFixed(2),
-        "totalChange": totalChange.toFixed(2),
-        "positiveChange": positiveChange.toFixed(2),
-        "negativeChange": negativeChange.toFixed(2)
+        "totalMspr": totalMspr,
+        "positiveMspr": positiveMspr,
+        "negativeMspr": negativeMspr,
+        "totalChange": totalChange,
+        "positiveChange": positiveChange,
+        "negativeChange": negativeChange
       }
       return extracted_data;
     }
@@ -342,20 +337,21 @@ app.get('/stock/company', async (req, res) => {
     }
 
     const [summaryCharts, stockNews_data, stockCharts_data, stockInsights_data, stockInsightsTrendsCharts_data, stockInsightsEPSCharts_data] = await Promise.all([
-      getStockSummaryCharts(symbol, return_data.detail.timestamp),
+      getStockSummaryCharts(symbol),
       getStockNews(symbol),
       getStockCharts(symbol),
       getStockInsights(symbol),
       getStockInsightsTrendsCharts(symbol),
       getStockInsightsEPSCharts(symbol),
     ]);
-
-    return_data["summaryCharts"] = summaryCharts
+    
+    summaryCharts["change"] = return_data.price.change;
+    return_data["hourlyChart"] = JSON.stringify(summaryCharts);
     return_data["news"] = stockNews_data;
-    return_data["charts"] = stockCharts_data;
+    return_data["SMACharts"] = JSON.stringify(stockCharts_data);
     return_data["insights"] = stockInsights_data;
-    return_data["insightsTrends"] = stockInsightsTrendsCharts_data;
-    return_data["insightsEPS"] = stockInsightsEPSCharts_data;
+    return_data["recommendCharts"] = JSON.stringify(stockInsightsTrendsCharts_data);
+    return_data["EPSCharts"] = JSON.stringify(stockInsightsEPSCharts_data);
 
     return res.json(return_data);
   } catch (error) {
@@ -364,28 +360,29 @@ app.get('/stock/company', async (req, res) => {
   }
 });
 
-app.get('/stock/update', async (req, res) => {
-  if (!req.query.symbol) { return res.status(400).json({}); }
-  const symbolMatches = req.query.symbol.match(/[a-zA-Z]+/g);
-  const symbol = symbolMatches ? symbolMatches.join('').toUpperCase() : '';
-  if (!symbol) { return res.status(400).json({}); }
-  res.set('Cache-Control', 'no-store');
+// app.get('/stock/update', async (req, res) => {
+//   if (!req.query.symbol) { return res.status(400).json({}); }
+//   const symbolMatches = req.query.symbol.match(/[a-zA-Z]+/g);
+//   const symbol = symbolMatches ? symbolMatches.join('').toUpperCase() : '';
+//   if (!symbol) { return res.status(400).json({}); }
+//   res.set('Cache-Control', 'no-store');
 
-  try {
-    let return_data = await getStockDetailAndSummary(symbol);
-    // const testT = new Date(Number(return_data.detail.timestamp));
-    // console.log("timestamp: ", testT.toISOString());
-    if (Object.keys(return_data).length === 0) {
-      return res.json({});
-    }
-    const summaryCharts = await getStockSummaryCharts(symbol, return_data.detail.timestamp);
-    return_data["summaryCharts"] = summaryCharts;
-    return res.json(return_data);
-  } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({});
-  }
-});
+//   try {
+//     let return_data = await getStockDetailAndSummary(symbol);
+//     // const testT = new Date(Number(return_data.detail.timestamp));
+//     // console.log("timestamp: ", testT.toISOString());
+//     if (Object.keys(return_data).length === 0) {
+//       return res.json({});
+//     }
+//     let summaryCharts = await getStockSummaryCharts(symbol);
+//     summaryCharts["change"] = return_data.detail.change;
+//     return_data["summaryCharts"] = summaryCharts;
+//     return res.json(return_data);
+//   } catch (error) {
+//     console.error('Error:', error);
+//     return res.status(500).json({});
+//   }
+// });
 
 // watchlist和portfolio的操作
 

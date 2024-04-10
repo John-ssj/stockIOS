@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    </head>
+    <body>
+        <div id="container" style="height: 300px; width: 100%; margin: 0 auto"></div>
+        <script>
+            function loadCharts(data) {
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'column',
+                        backgroundColor: '#fff'
+                    },
+                    
+                    title: {
+                        text: 'Recommendation Trends'
+                    },
+                    
+                    xAxis: {
+                        categories: data.period,
+                    },
+                    
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: '#Analysis'
+                        },
+                        stackLabels: {
+                            enabled: true
+                        }
+                    },
+                    
+                    plotOptions: {
+                        column: {
+                            stacking: 'normal',
+                            dataLabels: {
+                                enabled: true
+                            }
+                        }
+                    },
+                    
+                    series: [{
+                        name: 'Strong Buy',
+                        data: data.strongBuy,
+                        color: '#207a3f'
+                    }, {
+                        name: 'Buy',
+                        data: data.buy,
+                        color: '#37bf5f'
+                    }, {
+                        name: 'Hold',
+                        data: data.hold,
+                        color: '#c2951f'
+                    }, {
+                        name: 'Sell',
+                        data: data.sell,
+                        color: '#f66768'
+                    }, {
+                        name: 'Strong Sell',
+                        data: data.strongSell,
+                        color: '#8d3838'
+                    }]
+                });
+            }
+        </script>
+    </body>
+</html>

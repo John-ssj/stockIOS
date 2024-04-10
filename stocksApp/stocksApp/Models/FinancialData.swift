@@ -12,3 +12,21 @@ struct FinancialData: Decodable {
     var portfolio: [PortfolioData]
     var watchList: [FavoriteData]
 }
+
+struct PortfolioData: Decodable {
+    var stock: String
+    var quantity: Int
+    var marketValue: Double
+    var change: Double
+    var changePercent: Double
+    var index: Int
+}
+
+struct FavoriteData: Decodable {
+    var stock: String
+    var name: String
+    var currentPrice: Double
+    var change: Double
+    var changePercent: Double
+    var index: Int
+}

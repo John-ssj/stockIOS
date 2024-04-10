@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.highcharts.com/stock/highstock.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    </head>
+    <body>
+        <div id="container" style="height: 300px; width: 100%; margin: 0 auto"></div>
+        <script>
+            function loadCharts(data) {
+                Highcharts.stockChart('container', {
+                    chart: {
+                        backgroundColor: '#fff'
+                    },
+                    
+                    rangeSelector: {
+                        enabled: false
+                    },
+                    
+                    title: {
+                        text: data.stock + ' Hourly Price Variation'
+                    },
+                    
+                    navigator: {
+                        enabled: false
+                    },
+                    
+                    series: [{
+                        name: data.stock,
+                        color: data.change > 0 ? 'green' : 'red',
+                        data: data.charts,
+                        tooltip: {
+                            valueDecimals: 2
+                        }
+                    }]
+                });
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    </head>
+    <body>
+        <div id="container" style="height: 300px; width: 100%; margin: 0 auto"></div>
+        <script>
+            function loadCharts(data) {
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'spline',
+                        backgroundColor: '#fff'
+                    },
+                    
+                    title: {
+                        text: 'Historical EPS Surprises'
+                    },
+                    
+                    xAxis: {
+                        categories: data.periodAndSurprise,
+                    },
+                    
+                    yAxis: {
+                        title: {
+                            text: 'Quarterly EPS'
+                        }
+                    },
+                    
+                    series: [{
+                        name: 'Actual',
+                        marker: {
+                            symbol: 'circle'
+                        },
+                        data: data.actual
+                    }, {
+                        name: 'Estimate',
+                        marker: {
+                            symbol: 'diamond'
+                        },
+                        data: data.estimate
+                    }]
+                });
+            }
+        </script>
+    </body>
+</html>
