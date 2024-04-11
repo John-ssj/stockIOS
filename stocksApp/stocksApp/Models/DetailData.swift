@@ -13,6 +13,7 @@ struct DetailData: Decodable {
     var about: AboutData
     var news: [NewsItemData]
     var insights: InsightsData
+    var portfolio: DetailPortfolioData
     var hourlyChart: String
     var SMACharts: String
     var recommendCharts: String
@@ -58,4 +59,14 @@ struct NewsItemData: Decodable, Identifiable {
     var url: String
     
     var id: String { url }
+}
+
+struct DetailPortfolioData: Decodable {
+    var favorite: Bool
+    var stock: String
+    var quantity: Int
+    var avgCost: Double
+    var totalCost: Double
+    var change: Double
+    var marketValue: Double
 }

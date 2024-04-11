@@ -18,7 +18,7 @@ struct WebView: UIViewRepresentable {
         let wkUserScript = WKUserScript(source: jsString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
         conf.userContentController = WKUserContentController()
         conf.userContentController.addUserScript(wkUserScript)
-        let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 300), configuration: conf)
+        let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 350), configuration: conf)
         
         webView.navigationDelegate = context.coordinator
         

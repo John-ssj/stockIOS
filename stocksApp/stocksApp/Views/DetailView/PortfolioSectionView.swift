@@ -50,7 +50,7 @@ struct PortfolioSectionView: View {
                         HStack {
                             Text("Market Value: ")
                                 .fontWeight(.heavy)
-                            Text("$" + String(format:"%.2f", data.MarketValue))
+                            Text("$" + String(format:"%.2f", data.marketValue))
                                 .fontWeight(.medium)
                                 .foregroundColor(data.change > 0 ? Color.green : data.change < 0 ? Color.red : Color.gray)
                         }
@@ -86,17 +86,26 @@ extension PortfolioSectionView {
         @Published var avgCost: Double = 0
         @Published var totalCost: Double = 0
         @Published var change: Double = 0
-        @Published var MarketValue: Double = 0
+        @Published var marketValue: Double = 0
         
         init() {}
         
-        init(stock: String ,shares: Int, avgCost: Double, totalCost: Double, change: Double, MarketValue: Double) {
+        init(stock: String ,shares: Int, avgCost: Double, totalCost: Double, change: Double, marketValue: Double) {
             self.stock = stock
             self.shares = shares
             self.avgCost = avgCost
             self.totalCost = totalCost
             self.change = change
-            self.MarketValue = MarketValue
+            self.marketValue = marketValue
+        }
+        
+        init(d: DetailPortfolioData) {
+            self.stock = d.stock
+            self.shares = d.quantity
+            self.avgCost = d.avgCost
+            self.totalCost = d.totalCost
+            self.change = d.change
+            self.marketValue = d.marketValue
         }
     }
 }
@@ -108,5 +117,5 @@ extension PortfolioSectionView {
 }
 
 #Preview {
-    PortfolioSectionView(data: PortfolioSectionView.ViewModel(stock: "AAPL", shares: 3, avgCost: 171.23, totalCost: 513.69, change: -0.42, MarketValue: 513.27))
+    PortfolioSectionView(data: PortfolioSectionView.ViewModel(stock: "AAPL", shares: 3, avgCost: 171.23, totalCost: 513.69, change: -0.42, marketValue: 513.27))
 }

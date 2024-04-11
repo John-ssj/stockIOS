@@ -23,7 +23,7 @@ struct ChartsTabView: View {
                 Text("Historical")
             }
         }
-        .frame(height: 360)
+        .frame(height: 400)
     }
 }
 

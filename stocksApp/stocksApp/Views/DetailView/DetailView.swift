@@ -98,9 +98,9 @@ extension DetailView {
             AF.request(serverUrl + "/stock/company?symbol=" + stock).responseDecodable(of: DetailData.self) { response in
                 switch response.result {
                 case .success(let detailData):
-//                    self.favorite =
+                    self.favorite = detailData.portfolio.favorite
                     self.priceInfo = PriceSectionView.ViewModel(d: detailData.price)
-//                    self.portfolioInfo =
+                    self.portfolioInfo = PortfolioSectionView.ViewModel(d: detailData.portfolio)
                     self.statsInfo = StatsSectionView.ViewModel(d: detailData.stats)
                     self.aboutInfo = AboutSectionView.ViewModel(d: detailData.about)
                     print("detailData.news", detailData.news.count)

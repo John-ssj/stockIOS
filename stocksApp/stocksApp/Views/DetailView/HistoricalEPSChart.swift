@@ -13,7 +13,7 @@ struct HistoricalEPSChart: View {
     var body: some View {
         WebView(htmlFilename: "HistoricalEPSChart", data: jsonString)
             .edgesIgnoringSafeArea(.all)
-            .frame(height: 320)
+            .frame(height: 370)
     }
 }
 

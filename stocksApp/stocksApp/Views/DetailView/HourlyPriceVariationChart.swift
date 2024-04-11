@@ -13,7 +13,7 @@ struct HourlyPriceVariationChart: View {
     var body: some View {
         WebView(htmlFilename: "HourlyPriceVariationChart", data: jsonString)
             .edgesIgnoringSafeArea(.all)
-            .frame(height: 320)
+            .frame(height: 370)
     }
 }
 

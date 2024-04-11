@@ -13,7 +13,7 @@ struct SMAandVolumeChart: View {
     var body: some View {
         WebView(htmlFilename: "SMAandVolumeChart", data: jsonString)
             .edgesIgnoringSafeArea(.all)
-            .frame(height: 320)
+            .frame(height: 370)
     }
 }
 

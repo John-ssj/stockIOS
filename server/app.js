@@ -44,7 +44,7 @@ app.get('/stock/search', async (req, res) => {
         description: item.description,
         symbol: item.symbol
       })).sort((a, b) => a.symbol.localeCompare(b.symbol));
-      res.json({ "stocks": requiredData});
+      res.json({ "stocks": requiredData });
     }
   } catch (error) {
     console.error('Error:', error);
@@ -52,8 +52,8 @@ app.get('/stock/search', async (req, res) => {
   }
 });
 
-async function getStockSummaryCharts(stock) {
-  let t = new Date();
+async function getStockSummaryCharts(stock, date) {
+  let t = new Date(Number(date));
   let data = {};
   try {
     for (let i = 0; i < 4; i++) {
@@ -102,7 +102,7 @@ async function getStockDetailAndSummary(stock) {
       response_3.json()
     ]);
     if (Object.keys(data_1).length === 0 || Object.keys(data_2).length === 0 || Object.keys(data_3).length === 0) {
-      return {};
+      return [{}, ''];
     } else {
       const output_data_3 = data_3.filter(str => /^[A-Za-z]+$/.test(str));
 
@@ -126,11 +126,11 @@ async function getStockDetailAndSummary(stock) {
           "peers": output_data_3
         }
       };
-      return outputData;
+      return [outputData, data_2["t"] + '000'];
     }
   } catch (error) {
     console.error('Error:', error);
-    return {};
+    return [{}, ''];
   }
 };
 
@@ -331,25 +331,27 @@ app.get('/stock/company', async (req, res) => {
   res.set('Cache-Control', 'no-store');
 
   try {
-    let return_data = await getStockDetailAndSummary(symbol);
+    let [return_data, timestamp] = await getStockDetailAndSummary(symbol);
     if (Object.keys(return_data).length === 0) {
       return res.json({});
     }
 
-    const [summaryCharts, stockNews_data, stockCharts_data, stockInsights_data, stockInsightsTrendsCharts_data, stockInsightsEPSCharts_data] = await Promise.all([
-      getStockSummaryCharts(symbol),
+    const [summaryCharts, stockNews_data, stockCharts_data, stockInsights_data, stockInsightsTrendsCharts_data, stockInsightsEPSCharts_data, portfolio_data] = await Promise.all([
+      getStockSummaryCharts(symbol, timestamp),
       getStockNews(symbol),
       getStockCharts(symbol),
       getStockInsights(symbol),
       getStockInsightsTrendsCharts(symbol),
       getStockInsightsEPSCharts(symbol),
+      getFinancialInfo(symbol)
     ]);
-    
+
+    return_data["news"] = stockNews_data;
+    return_data["insights"] = stockInsights_data;
+    return_data["portfolio"] = portfolio_data;
     summaryCharts["change"] = return_data.price.change;
     return_data["hourlyChart"] = JSON.stringify(summaryCharts);
-    return_data["news"] = stockNews_data;
     return_data["SMACharts"] = JSON.stringify(stockCharts_data);
-    return_data["insights"] = stockInsights_data;
     return_data["recommendCharts"] = JSON.stringify(stockInsightsTrendsCharts_data);
     return_data["EPSCharts"] = JSON.stringify(stockInsightsEPSCharts_data);
 
@@ -359,30 +361,6 @@ app.get('/stock/company', async (req, res) => {
     return res.status(500).json({});
   }
 });
-
-// app.get('/stock/update', async (req, res) => {
-//   if (!req.query.symbol) { return res.status(400).json({}); }
-//   const symbolMatches = req.query.symbol.match(/[a-zA-Z]+/g);
-//   const symbol = symbolMatches ? symbolMatches.join('').toUpperCase() : '';
-//   if (!symbol) { return res.status(400).json({}); }
-//   res.set('Cache-Control', 'no-store');
-
-//   try {
-//     let return_data = await getStockDetailAndSummary(symbol);
-//     // const testT = new Date(Number(return_data.detail.timestamp));
-//     // console.log("timestamp: ", testT.toISOString());
-//     if (Object.keys(return_data).length === 0) {
-//       return res.json({});
-//     }
-//     let summaryCharts = await getStockSummaryCharts(symbol);
-//     summaryCharts["change"] = return_data.detail.change;
-//     return_data["summaryCharts"] = summaryCharts;
-//     return res.json(return_data);
-//   } catch (error) {
-//     console.error('Error:', error);
-//     return res.status(500).json({});
-//   }
-// });
 
 // watchlist和portfolio的操作
 
@@ -402,6 +380,41 @@ async function getFinancialPrice(stock) {
     "change": data["d"],
     "changePercent": data["dp"] ? data["dp"] : 0
   };
+}
+
+async function getFinancialInfo(stock) {
+  try {
+    const profile = await UserFinancialProfile.findOne({ id: 0 });
+    const watchListExists = profile.watchList.some(item => item.stock === stock);
+    const portfolioItem = profile.portfolio.find(item => item.stock === stock);
+    if (portfolioItem) {
+      const priceData = await getFinancialPrice(portfolioItem.stock);
+      const marketValue = Number(priceData.currentPrice) * portfolioItem.quantity;
+      const change = marketValue - portfolioItem.totalCost;
+      return {
+        "favorite": watchListExists,
+        "stock": portfolioItem.stock,
+        "quantity": portfolioItem.quantity,
+        "avgCost": portfolioItem.totalCost / portfolioItem.quantity,
+        "totalCost": portfolioItem.totalCost,
+        "change": change,
+        "marketValue": marketValue
+      };
+    } else {
+      return {
+        "favorite": watchListExists,
+        "stock": portfolioItem.stock,
+        "quantity": 0,
+        "avgCost": 0,
+        "totalCost": 0,
+        "change": 0,
+        "marketValue": 0
+      };
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return {}
+  }
 }
 
 async function getPortfolio() {
@@ -480,33 +493,6 @@ app.get('/financial/init', async (req, res) => {
   }
 });
 
-app.get('/financial/getWallet', async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  try {
-    const profile = await UserFinancialProfile.findOne({ id: 0 });
-    if (profile) {
-      res.json({ "wallet": profile.wallet });
-    } else {
-      res.status(404).send({});
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send({});
-  }
-});
-
-app.get('/financial/getWatchList', async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  const watchList_data = await getWatchList();
-  res.json({ "watchList": watchList_data });
-});
-
-app.get('/financial/getPortfolio', async (req, res) => {
-  res.set('Cache-Control', 'no-store');
-  const portfolio_data = await getPortfolio();
-  res.json(portfolio_data);
-});
-
 app.get('/financial/getAll', async (req, res) => {
   res.set('Cache-Control', 'no-store');
   const data = await getPortfolio();
@@ -523,10 +509,8 @@ app.get('/financial/getInfo', async (req, res) => {
   if (!symbol) { res.json({}); }
 
   try {
-    const profile = await UserFinancialProfile.findOne({ id: 0 });
-    const watchListExists = profile.watchList.some(item => item.stock === symbol);
-    const portfolioExists = profile.portfolio.some(item => item.stock === symbol);
-    res.json({ "watchList": watchListExists, "portfolio": portfolioExists });
+    const res = await getFinancialInfo(symbol);
+    res.json(res);
   } catch (error) {
     console.error('Error:', error);
     res.json({});
