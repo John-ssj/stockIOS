@@ -33,10 +33,10 @@ struct Toast<Presenting, Content>: View where Presenting: View, Content: View {
                         
                         self.content()
                     }
-                    .frame(width: geometry.size.width / 1.25, height: geometry.size.height / 10)
+                    .frame(width: geometry.size.width / 1.25, height: geometry.size.height / 12)
                     .opacity(self.isPresented ? 1 : 0)
                 }
-                .padding(.bottom, 20)
+                .padding(.bottom, 10)
                 .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)

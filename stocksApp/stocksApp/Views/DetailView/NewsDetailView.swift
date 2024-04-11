@@ -29,7 +29,7 @@ struct NewsDetailView: View {
                 .font(.title)
                 .fontWeight(.bold)
             
-            Text(data.datetime)
+            Text(data.dateString)
                 .fontWeight(.medium)
                 .font(.footnote)
                 .foregroundColor(Color.gray)
@@ -81,17 +81,17 @@ extension NewsDetailView {
         @Published var imgUrl: String = ""
         @Published var headline: String = ""
         @Published var source: String = ""
-        @Published var datetime: String = ""
+        @Published var dateString: String = ""
         @Published var summary: String = ""
         @Published var url: String = ""
         @Published var twitterShareUrl: String = ""
         @Published var facebookShareUrl: String = ""
         
-        init(imgUrl: String, headline: String, source: String, datetime: String, summary: String, url: String) {
+        init(imgUrl: String, headline: String, source: String, dateString: String, summary: String, url: String) {
             self.imgUrl = imgUrl
             self.headline = headline
             self.source = source
-            self.datetime = datetime
+            self.dateString = dateString
             self.summary = summary
             self.url = url
             self.twitterShareUrl = "https://twitter.com/intent/tweet?text=\(encodeURIComponent(headline))&url=\(encodeURIComponent(url))"
@@ -102,7 +102,7 @@ extension NewsDetailView {
             self.imgUrl = d.imgUrl
             self.headline = d.headline
             self.source = d.source
-            self.datetime = d.datetime
+            self.dateString = DateToString(t: d.datetime, format: "MMMM d, yyyy")
             self.summary = d.summary
             self.url = d.url
             self.twitterShareUrl = "https://twitter.com/intent/tweet?text=\(encodeURIComponent(headline))&url=\(encodeURIComponent(url))"
@@ -116,5 +116,5 @@ extension NewsDetailView {
 }
 
 #Preview {
-    NewsDetailView(selectedNews: .constant(nil), data: NewsDetailView.ViewModel(imgUrl: "https://s.yimg.com/ny/api/res/1.2/euQSw3.dSpyGJdVN5H_ZIw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02MDA-/https://media.zenfs.com/en/Barrons.com/c9ed8009b3d8d858b29ad4bf0c110f86", headline: "These Stocks Are Moving the Most Today: Nvidia, Delta, Taiwan Semiconductor, PriceSmart, WD-40, and More", source: "Yahoo", datetime: "April 10, 2024", summary: "Nvidia stock slips after shares enter a correction, Delta is scheduled to report first-quarter earnings, and Taiwan Semiconductor posts strong quarterly sales.", url: "https://finnhub.io/api/news?id=aa78361f5e07292fb6dd0b671afdf0179c5becd8eb0b46810d34d5270ec72c26"))
+    NewsDetailView(selectedNews: .constant(nil), data: NewsDetailView.ViewModel(imgUrl: "https://s.yimg.com/ny/api/res/1.2/euQSw3.dSpyGJdVN5H_ZIw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02MDA-/https://media.zenfs.com/en/Barrons.com/c9ed8009b3d8d858b29ad4bf0c110f86", headline: "These Stocks Are Moving the Most Today: Nvidia, Delta, Taiwan Semiconductor, PriceSmart, WD-40, and More", source: "Yahoo", dateString: "April 10, 2024", summary: "Nvidia stock slips after shares enter a correction, Delta is scheduled to report first-quarter earnings, and Taiwan Semiconductor posts strong quarterly sales.", url: "https://finnhub.io/api/news?id=aa78361f5e07292fb6dd0b671afdf0179c5becd8eb0b46810d34d5270ec72c26"))
 }

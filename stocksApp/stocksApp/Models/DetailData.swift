@@ -54,16 +54,42 @@ struct NewsItemData: Decodable, Identifiable {
     var imgUrl: String
     var headline: String
     var source: String
-    var datetime: String
+    var datetime: Date
     var summary: String
     var url: String
     
     var id: String { url }
+    
+    enum CodingKeys: String, CodingKey {
+        case imgUrl, headline, source, datetime, summary, url
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        imgUrl = try container.decode(String.self, forKey: .imgUrl)
+        headline = try container.decode(String.self, forKey: .headline)
+        source = try container.decode(String.self, forKey: .source)
+        let timestamp = try container.decode(Int.self, forKey: .datetime)
+        datetime = Date(timeIntervalSince1970: TimeInterval(timestamp))
+        summary = try container.decode(String.self, forKey: .summary)
+        url = try container.decode(String.self, forKey: .url)
+    }
+    
+    init(imgUrl: String, headline: String, source: String, datetime: Date, summary: String, url: String) {
+        self.imgUrl = imgUrl
+        self.headline = headline
+        self.source = source
+        self.datetime = datetime
+        self.summary = summary
+        self.url = url
+    }
 }
 
 struct DetailPortfolioData: Decodable {
     var favorite: Bool
     var stock: String
+    var name: String
     var quantity: Int
     var avgCost: Double
     var totalCost: Double

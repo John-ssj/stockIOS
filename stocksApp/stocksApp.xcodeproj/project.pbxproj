@@ -40,6 +40,9 @@
 		7B85E72C2BC7132C0019A536 /* DetailData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B85E72B2BC7132C0019A536 /* DetailData.swift */; };
 		7BB2046D2BC1726D0081B9E6 /* PortfolioInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB2046C2BC1726D0081B9E6 /* PortfolioInfoView.swift */; };
 		7BB204742BC17EEA0081B9E6 /* PortfolioItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB204732BC17EEA0081B9E6 /* PortfolioItemView.swift */; };
+		7BCB8CE72BC77D1300310142 /* TradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BCB8CE62BC77D1300310142 /* TradeView.swift */; };
+		7BCB8CE92BC783E700310142 /* TradeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BCB8CE82BC783E700310142 /* TradeData.swift */; };
+		7BCB8CEB2BC7984500310142 /* DateTrans.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BCB8CEA2BC7984500310142 /* DateTrans.swift */; };
 		7BD6E6572BC1A2E400808CC1 /* FavoriteItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BD6E6562BC1A2E400808CC1 /* FavoriteItemView.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +84,9 @@
 		7B85E72B2BC7132C0019A536 /* DetailData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailData.swift; sourceTree = "<group>"; };
 		7BB2046C2BC1726D0081B9E6 /* PortfolioInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioInfoView.swift; sourceTree = "<group>"; };
 		7BB204732BC17EEA0081B9E6 /* PortfolioItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioItemView.swift; sourceTree = "<group>"; };
+		7BCB8CE62BC77D1300310142 /* TradeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeView.swift; sourceTree = "<group>"; };
+		7BCB8CE82BC783E700310142 /* TradeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeData.swift; sourceTree = "<group>"; };
+		7BCB8CEA2BC7984500310142 /* DateTrans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTrans.swift; sourceTree = "<group>"; };
 		7BD6E6562BC1A2E400808CC1 /* FavoriteItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -141,9 +147,9 @@
 			isa = PBXGroup;
 			children = (
 				7B351DD02BBCEE3200BD38E0 /* HomeView.swift */,
-				7BB204732BC17EEA0081B9E6 /* PortfolioItemView.swift */,
 				7B85E6F42BC582CF0019A536 /* SearchItemView.swift */,
 				7BB2046C2BC1726D0081B9E6 /* PortfolioInfoView.swift */,
+				7BB204732BC17EEA0081B9E6 /* PortfolioItemView.swift */,
 				7BD6E6562BC1A2E400808CC1 /* FavoriteItemView.swift */,
 			);
 			path = HomeView;
@@ -158,6 +164,7 @@
 				7B85E71D2BC68E1B0019A536 /* SMAandVolumeChart.swift */,
 				7B85E71F2BC698190019A536 /* ChartsTabView.swift */,
 				7B85E6FF2BC632A60019A536 /* PortfolioSectionView.swift */,
+				7BCB8CE62BC77D1300310142 /* TradeView.swift */,
 				7B85E7012BC63C790019A536 /* StatsSectionView.swift */,
 				7B85E7032BC63FCF0019A536 /* AboutSectionView.swift */,
 				7B85E7052BC647C00019A536 /* InsightsSectionView.swift */,
@@ -177,6 +184,7 @@
 				7B85E70B2BC67CD00019A536 /* WebView.swift */,
 				7B85E6F72BC58B380019A536 /* Debouncer.swift */,
 				7B85E6FB2BC61F690019A536 /* Toast.swift */,
+				7BCB8CEA2BC7984500310142 /* DateTrans.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -207,6 +215,7 @@
 				7B85E6EE2BC522180019A536 /* FinancialData.swift */,
 				7B85E6F92BC58F040019A536 /* SearchData.swift */,
 				7B85E72B2BC7132C0019A536 /* DetailData.swift */,
+				7BCB8CE82BC783E700310142 /* TradeData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -346,10 +355,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BCB8CEB2BC7984500310142 /* DateTrans.swift in Sources */,
 				7B85E7022BC63C790019A536 /* StatsSectionView.swift in Sources */,
+				7BCB8CE72BC77D1300310142 /* TradeView.swift in Sources */,
 				7B85E7082BC674770019A536 /* RecommendationTrendsChart.swift in Sources */,
 				7B85E72C2BC7132C0019A536 /* DetailData.swift in Sources */,
 				7B85E6FE2BC62DED0019A536 /* PriceSectionView.swift in Sources */,
+				7BCB8CE92BC783E700310142 /* TradeData.swift in Sources */,
 				7B85E6FC2BC61F690019A536 /* Toast.swift in Sources */,
 				7B85E7002BC632A60019A536 /* PortfolioSectionView.swift in Sources */,
 				7B85E71C2BC68E120019A536 /* HourlyPriceVariationChart.swift in Sources */,

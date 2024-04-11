@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import Alamofire
 
 struct PortfolioSectionView: View {
     @ObservedObject var data: ViewModel
+    @State private var isTrading: Bool = false
     
     init(data: ViewModel?) {
         self.data = data ?? ViewModel()
@@ -64,24 +66,37 @@ struct PortfolioSectionView: View {
                 
                 Spacer()
                 
-                Button(action: openTradeView, label: {
+                
+                Button {
+                    isTrading = true
+                } label: {
                     Text("Trade")
                         .font(.headline)
                         .foregroundColor(Color.white)
                         .padding(.vertical, 15)
                         .padding(.horizontal, 50)
                         .background(Capsule().fill(Color.green))
-                })
+                }
+                .onChange(of: isTrading) { oldValue, newValue in
+                    if(newValue == false) {
+                        print("update portfolio")
+                        data.getDataFromServer()
+                    }
+                }
                 
                 Spacer()
             }
         }
+        .sheet(isPresented: $isTrading, content: {
+            TradeView(isTrading: $isTrading, stock: data.stock, name: data.name)
+        })
     }
 }
 
 extension PortfolioSectionView {
     class ViewModel: ObservableObject {
         @Published var stock: String = ""
+        @Published var name: String = ""
         @Published var shares: Int = 0
         @Published var avgCost: Double = 0
         @Published var totalCost: Double = 0
@@ -90,8 +105,9 @@ extension PortfolioSectionView {
         
         init() {}
         
-        init(stock: String ,shares: Int, avgCost: Double, totalCost: Double, change: Double, marketValue: Double) {
+        init(stock: String ,name: String ,shares: Int, avgCost: Double, totalCost: Double, change: Double, marketValue: Double) {
             self.stock = stock
+            self.name = name
             self.shares = shares
             self.avgCost = avgCost
             self.totalCost = totalCost
@@ -101,21 +117,32 @@ extension PortfolioSectionView {
         
         init(d: DetailPortfolioData) {
             self.stock = d.stock
+            self.name = d.name
             self.shares = d.quantity
             self.avgCost = d.avgCost
             self.totalCost = d.totalCost
             self.change = d.change
             self.marketValue = d.marketValue
         }
-    }
-}
-
-extension PortfolioSectionView {
-    func openTradeView() {
-        print("Trade")
+        
+        func getDataFromServer() {
+            print("startgetData-PortfolioSectionView: ", stock)
+            AF.request(serverUrl + "/financial/getInfo?symbol=" + stock).responseDecodable(of: DetailPortfolioData.self) { response in
+                switch response.result {
+                case .success(let portfolioData):
+                    self.shares = portfolioData.quantity
+                    self.avgCost = portfolioData.avgCost
+                    self.totalCost = portfolioData.totalCost
+                    self.change = portfolioData.change
+                    self.marketValue = portfolioData.marketValue
+                case .failure(let error):
+                    print("Error while fetching data: \(error.localizedDescription)")
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    PortfolioSectionView(data: PortfolioSectionView.ViewModel(stock: "AAPL", shares: 3, avgCost: 171.23, totalCost: 513.69, change: -0.42, marketValue: 513.27))
+    PortfolioSectionView(data: PortfolioSectionView.ViewModel(stock: "AAPL", name: "Apple Inc", shares: 3, avgCost: 171.23, totalCost: 513.69, change: -0.42, marketValue: 513.27))
 }

@@ -21,7 +21,7 @@ struct FavoriteItemView: View {
                     .fontWeight(.medium)
                     .foregroundColor(Color.gray)
                     .multilineTextAlignment(.leading)
-                    .frame(width: 120.0, alignment: .leading)
+                    .frame(maxWidth: 120.0, alignment: .leading)
             }
             
             Spacer()
@@ -38,10 +38,8 @@ struct FavoriteItemView: View {
                     } else {
                         Image(systemName: "minus")
                     }
-                    Text("  $" + String(format:"%.2f", data.change))
-                    Text("(" + String(format:"%.2f", data.changePercent) + "%)")
+                    Text("  $\(String(format:"%.2f", data.change)) (\(String(format:"%.2f", data.changePercent))%)")
                 }
-                .lineLimit(1)
                 .font(.body)
                 .fontWeight(.medium)
                 .foregroundColor(data.change > 0 ? Color.green : data.change < 0 ? Color.red : Color.gray)

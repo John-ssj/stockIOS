@@ -18,7 +18,7 @@ struct NewsItemView: View {
                     Text(data.source)
                         .fontWeight(.bold)
                     
-                    Text(data.datetime)
+                    Text(data.dateString)
                         .fontWeight(.medium)
                 }
                 .font(.footnote)
@@ -48,24 +48,24 @@ extension NewsItemView {
         @Published var imgUrl: String = ""
         @Published var headline: String = ""
         @Published var source: String = ""
-        @Published var datetime: String = ""
+        @Published var dateString: String = ""
         
-        init(imgUrl: String, headline: String, source: String, datetime: String) {
+        init(imgUrl: String, headline: String, source: String, dateString: String) {
             self.imgUrl = imgUrl
             self.headline = headline
             self.source = source
-            self.datetime = datetime
+            self.dateString = dateString
         }
         
         init(d: NewsItemData) {
             self.imgUrl = d.imgUrl
             self.headline = d.headline
             self.source = d.source
-            self.datetime = d.datetime
+            self.dateString = DateFromNow(t: d.datetime)
         }
     }
 }
 
 #Preview {
-    NewsItemView(data: NewsItemView.ViewModel(imgUrl: "https://s.yimg.com/ny/api/res/1.2/euQSw3.dSpyGJdVN5H_ZIw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02MDA-/https://media.zenfs.com/en/Barrons.com/c9ed8009b3d8d858b29ad4bf0c110f86", headline: "These Stocks Are Moving the Most Today: Nvidia, Delta, Taiwan Semiconductor, PriceSmart, WD-40, and More", source: "Yahoo", datetime: "April 10, 2024"))
+    NewsItemView(data: NewsItemView.ViewModel(imgUrl: "https://s.yimg.com/ny/api/res/1.2/euQSw3.dSpyGJdVN5H_ZIw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02MDA-/https://media.zenfs.com/en/Barrons.com/c9ed8009b3d8d858b29ad4bf0c110f86", headline: "These Stocks Are Moving the Most Today: Nvidia, Delta, Taiwan Semiconductor, PriceSmart, WD-40, and More", source: "Yahoo", dateString: "10 hr, 10min"))
 }
